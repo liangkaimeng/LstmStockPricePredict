@@ -17,17 +17,15 @@ class TrainModel(object):
         data = self.download_realtime_data(stock_number)
         step = self.select_step_window(data)
 
-        x, y = self.window_dataset(data, step)
+        x, y = self.window_dataset(data, int(step))
         x, y = np.reshape(x[:-3], (x[:-3].shape[0], x[:-3].shape[1], 1)), y[:-3]
-        model = self.set_model(step)
+        model = self.set_model(int(step))
         model.fit(x, y, epochs=300)
 
-        x0 = np.array([[12.08, 11.85, 12.32, 13.17, 12.72],
-                       [11.85, 12.32, 13.17, 12.72, 11.57],
-                       [12.32, 13.17, 12.72, 11.57, 12.73]])
+        x0, y0 = np.reshape(x[-3:], (x[-3:].shape[0], x[-3:].shape[1], 1)), y[-3:]
         x0 = np.reshape(x0, (x0.shape[0], x0.shape[1], 1))
         pred = model.predict(x0)
-        print(pred)
+        print(y0, pred)
 
     def select_step_window(self, df):
         steps = range(5, round(len(df) * 0.8))
